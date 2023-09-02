@@ -1,9 +1,10 @@
 import React, { useState } from "react";
+import "./Todo.css"
 const Todo = () => {
     const [todos, setTodos] = useState([])
     const [inputValue, setInputValue] = useState("")
-    const [editTodo, setEditTodo] = useState(false)
-    const[editId, setEditId] = useState(null)
+    const [editMode, setEditMode] = useState(false);//edit mode off hai
+    const [editId, setEditId] = useState(null)
     const [editValue, setEditValue] = useState("")
 
     const addTodo = () => {
@@ -18,39 +19,51 @@ const Todo = () => {
         }
     }
     //delete Todo
-    const deleteTodo =(id)=>{
-        const updateTodos =todos.filter((todo)=>todo.id!==id);
+    const deleteTodo = (id) => {
+        const updateTodos = todos.filter((todo) => todo.id !== id);
         setTodos(updateTodos);
     }
     //update Todo
-    const edit =(id,text)=>{
-       setEditTodo(true)
-       setEditId(id)
-       setEditValue(text)
+    const edit = (id, text) => {
+        setEditMode(true);
+        setEditId(id);
+        setEditValue(text);
     }
-    const updateAfterEditTodo=()=>{
-        const updateAfterEditTodos = todos.map((todo)=>{
-        if(todo.id===editId)
-        {
-            return{...todo,text:editValue};
-        }return todo;
-    })
-    setTodos(updateAfterEditTodos)
-    setEditTodo(false)
-    setEditId(null)
-    setEditValue('')
-}
+    const updateAfterEditTodo = () => {
+        const updateAfterEditTodos = todos.map((todo) => {
+            if (todo.id === editId) {
+                return { ...todo, text: editValue };
+            } return todo;
+        })
+        setTodos(updateAfterEditTodos)
+        setEditMode(false)
+        setEditId(null)
+        setEditValue('')
+    }
     return (
         <div className="todo-container">
             <h2>Todo List</h2>
             <input type="text" value={inputValue} onChange={(e) => setInputValue(e.target.value)} />
-            <button onClick={addTodo}>Add</button>
+            {
+            editMode ?(
+                <div>
+                    <input type="text" 
+                    value={editValue}
+                    onChange={(e)=> setEditValue(e.target.value)}/>
+                    <button onClick={updateAfterEditTodo}>Update</button>
+                    </div>
+            ):(
+                <button onClick={addTodo}>Add</button>
+            )         
+             }
             <ul>
                 {todos.map((todo) => (
                     <li key={todo.id}>
                         {todo.text}
+                        <div>
                         <button onClick={()=>deleteTodo(todo.id)}>Delete</button>
                         <button onClick={()=>edit(todo.id,todo.text)}>Edit</button>
+                        </div>
                     </li>
                 ))}
             </ul>
